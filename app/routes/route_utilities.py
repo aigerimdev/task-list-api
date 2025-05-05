@@ -18,9 +18,9 @@ def validate_model(cls, model_id):
     return model
 
 
-def create_model_from_dict(cls, data):
+def create_model_from_dict(cls, task_data):
     try: 
-        new_instance = cls.from_dict(data)
+        new_instance = cls.from_dict(task_data)
     except KeyError as error:
         response = {"details": f"Invalid data"}
         abort(make_response(response, 400))
@@ -28,4 +28,3 @@ def create_model_from_dict(cls, data):
     db.session.commit()
     
     return {"task": new_instance.to_dict()}, 201
-

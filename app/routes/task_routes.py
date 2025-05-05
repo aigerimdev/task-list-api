@@ -3,14 +3,16 @@ from app.models.task import Task
 from app import db
 from .route_utilities import create_model_from_dict
 from .route_utilities import validate_model
+from flask import jsonify
+
 
 tasks_bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks") # main rout
 
 # create task
 @tasks_bp.post("")
 def create_task():
-    request_body = request.get_json()  
-    return create_model_from_dict(Task, request_body)
+    task_data = request.get_json()  
+    return create_model_from_dict(Task, task_data)
 
 # get all books
 @tasks_bp.get("")
@@ -26,8 +28,10 @@ def get_all_tasks():
         query = query.where(Task.description.ilike(f"%{description_param}%"))
     
     is_complete_param = request.args.get("is_complete")
-    if is_complete_param:
-        query = query.where(Task.completed_at.isnot(None if is_complete_param == True else True))
+    if is_complete_param == "true":
+        query = query.where(Task.completed_at.isnot(None))
+    elif is_complete_param == "false":
+        query = query.where(Task.completed_at.is_(None))
     
     tasks = db.session.scalars(query.order_by(Task.id))
     
@@ -35,14 +39,14 @@ def get_all_tasks():
     tasks_response = []
     for task in tasks:
         tasks_response.append(task.to_dict())
-    return tasks_response
+    return jsonify(tasks_response)
 
 # get one task
 @tasks_bp.get("/<task_id>")
 def get_one_task(task_id):
     task = validate_model(Task, task_id)
     
-    return task.to_dict()
+    return {"task": task.to_dict()}
 
 # update task
 @tasks_bp.put("/<task_id>")
