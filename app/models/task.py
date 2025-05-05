@@ -25,6 +25,5 @@ class Task(db.Model): # specificheskii model dlya sql
             "id": self.id,
             "title": self.title,
             "description": self.description,
-            # "is_complete": self.completed_at is not None
             "is_complete": self.completed_at is not None
         }
