@@ -36,3 +36,10 @@ def get_all_tasks():
     for task in tasks:
         tasks_response.append(task.to_dict())
     return tasks_response
+
+# get one task
+@tasks_bp.get("/<task_id>")
+def get_one_book(task_id):
+    task = validate_model(Task, task_id)
+    
+    return task.to_dict()
