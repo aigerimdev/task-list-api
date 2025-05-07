@@ -10,14 +10,14 @@ class Task(db.Model): # specificheskii model dlya sql
     description: Mapped[str]
     completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     # completed_at: Mapped[datetime] = mapped_column(nullable=True)
-    #  completed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    # completed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     
     @classmethod
     def from_dict(cls, task_data): # task_data = dictionary data
         return cls(
             title=task_data["title"],
-            description=task_data["description"]
-            # completed_at=task_data.get("completed_at")  # will be None if null
+            description=task_data["description"],
+            completed_at=task_data.get("completed_at")  # will be None if null
         )
 
     def to_dict(self):

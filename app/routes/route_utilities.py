@@ -28,3 +28,16 @@ def create_model_from_dict(cls, task_data):
     db.session.commit()
     
     return {"task": new_instance.to_dict()}, 201
+
+
+def get_models_with_filters(cls, filters=None):
+    query = db.select(cls)
+    
+    if filters:
+        for attribute, value in filters.items():
+            if hasattr(cls, attribute):
+                query = query.where(getattr(cls, attribute).ilike(f"%{value}%"))
+
+    models = db.session.scalars(query.order_by(cls.id))
+    models_response = [model.to_dict() for model in models]
+    return models_response

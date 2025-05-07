@@ -63,6 +63,7 @@ def delete_task(task_id):
     
     return Response(status=204, mimetype="application/json")
 
+# partially update
 @tasks_bp.patch("/<task_id>/mark_complete")
 def mark_task_complete(task_id):
     task = validate_model(Task, task_id)
