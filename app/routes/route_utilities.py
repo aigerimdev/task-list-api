@@ -32,12 +32,24 @@ def create_model_from_dict(cls, task_data):
 
 def get_models_with_filters(cls, filters=None):
     query = db.select(cls)
-    
+
+    sort_order = None
     if filters:
+        # Pull out 'sort' and prevent it from becoming a filter
+        sort_order = filters.get("sort", None)
+
+        # Apply other filters
         for attribute, value in filters.items():
             if hasattr(cls, attribute):
                 query = query.where(getattr(cls, attribute).ilike(f"%{value}%"))
 
-    models = db.session.scalars(query.order_by(cls.id))
-    models_response = [model.to_dict() for model in models]
-    return models_response
+    # Apply sorting
+    if sort_order == "asc":
+        query = query.order_by(cls.title.asc())
+    elif sort_order == "desc":
+        query = query.order_by(cls.title.desc())
+    else:
+        query = query.order_by(cls.id)
+
+    models = db.session.scalars(query)
+    return [model.to_dict() for model in models]
