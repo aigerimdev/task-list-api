@@ -11,28 +11,28 @@ import os
 load_dotenv()
 
 
-tasks_bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks") # main rout
+bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks") # main rout
 
 # create task
-@tasks_bp.post("")
+@bp.post("")
 def create_task():
     task_data = request.get_json()  
     return create_model_from_dict(Task, task_data)
 
 # get all tasks
-@tasks_bp.get("")
+@bp.get("")
 def get_all_tasks():
     return get_models_with_filters(Task, request.args)
 
 # get one task
-@tasks_bp.get("/<task_id>")
+@bp.get("/<task_id>")
 def get_one_task(task_id):
     task = validate_model(Task, task_id)
     
     return {"task": task.to_dict()}
 
 # update task
-@tasks_bp.put("/<task_id>")
+@bp.put("/<task_id>")
 def update_task(task_id):
     task = validate_model(Task, task_id)
     request_body = request.get_json()
@@ -45,7 +45,7 @@ def update_task(task_id):
     return Response(status=204, mimetype="application/json")
 
 # delete task
-@tasks_bp.delete("/<task_id>")
+@bp.delete("/<task_id>")
 def delete_task(task_id):
     task = validate_model(Task, task_id)
     db.session.delete(task)
@@ -68,7 +68,7 @@ def notify_slack(task_title):
     response = requests.post("https://slack.com/api/chat.postMessage", headers=headers, json=payload)
     return response.json()
 
-@tasks_bp.patch("/<task_id>/mark_complete")
+@bp.patch("/<task_id>/mark_complete")
 def mark_complete(task_id):
     task = validate_model(Task, task_id)
 
@@ -81,7 +81,7 @@ def mark_complete(task_id):
 
 
 # partially update incompleted
-@tasks_bp.patch("/<task_id>/mark_incomplete")
+@bp.patch("/<task_id>/mark_incomplete")
 def mark_task_incomplete(task_id):
     task = validate_model(Task, task_id)
     task.completed_at = None
