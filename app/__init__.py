@@ -1,7 +1,8 @@
 from flask import Flask
 from .db import db, migrate
 from .models import task, goal
-from .routes.task_routes import tasks_bp
+from .routes.task_routes import bp as tasks_bp
+from .routes.goal_routes import bp as goals_bp
 import os
 
 def create_app(config=None):
@@ -19,7 +20,8 @@ def create_app(config=None):
     migrate.init_app(app, db)
 
     # Register Blueprints here
-    from app.routes.task_routes import tasks_bp
     app.register_blueprint(tasks_bp)
+    app.register_blueprint(goals_bp)
+
 
     return app
