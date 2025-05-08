@@ -26,8 +26,9 @@ def create_model_from_dict(cls, task_data):
         abort(make_response(response, 400))
     db.session.add(new_instance)
     db.session.commit()
+    model_name = cls.__name__.lower() 
     
-    return {"task": new_instance.to_dict()}, 201
+    return {model_name: new_instance.to_dict()}, 201
 
 
 def get_models_with_filters(cls, filters=None):
