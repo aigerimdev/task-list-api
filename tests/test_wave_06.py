@@ -119,3 +119,15 @@ def test_get_task_includes_goal_id(client, one_task_belongs_to_one_goal):
             "is_complete": False
         }
     }
+    
+# additional test
+def test_goal_to_dict_includes_tasks(one_task_belongs_to_one_goal):
+    from app.models.goal import Goal
+
+    goal = db.session.scalar(db.select(Goal).where(Goal.id == 1))
+    result = goal.to_dict(include_tasks=True)
+
+    assert "tasks" in result
+    assert isinstance(result["tasks"], list)
+    assert len(result["tasks"]) == 1
+    assert "id" in result["tasks"][0]

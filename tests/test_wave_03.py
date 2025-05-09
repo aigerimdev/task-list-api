@@ -112,3 +112,11 @@ def test_mark_incomplete_missing_task(client):
     # *****************************************************************
     # **Complete test with assertion about response body***************
     # *****************************************************************
+
+def test_get_tasks_with_filter(client, one_task):
+    response = client.get("/tasks?title=walk")
+    response_body = response.get_json()
+
+    assert response.status_code == 200
+    assert len(response_body) == 1
+    assert "Go on my daily walk" in response_body[0]["title"]

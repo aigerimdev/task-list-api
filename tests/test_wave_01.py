@@ -194,3 +194,10 @@ def test_create_task_must_contain_description(client):
         "details": "Invalid data"
     }
     assert db.session.scalars(db.select(Task)).all() == []
+
+def test_get_task_invalid_id(client):
+    response = client.get("/tasks/cake")
+    response_body = response.get_json()
+
+    assert response.status_code == 400
+    assert response_body == {"message": "Task cake invalid"}
