@@ -28,8 +28,8 @@ def get_all_tasks():
 @bp.get("/<task_id>")
 def get_one_task(task_id):
     task = validate_model(Task, task_id)
-    
-    return {"task": task.to_dict()}
+    return {"task": task.to_dict(include_goal_id=(task.goal_id is not None))}
+
 
 # update task
 @bp.put("/<task_id>")
