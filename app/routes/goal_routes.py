@@ -52,10 +52,13 @@ def delete_goal(goal_id):
 def assign_tasks_to_goal(goal_id):
     goal = validate_model(Goal, goal_id)
     request_body = request.get_json()
-
     task_ids = request_body.get("task_ids", [])
-    tasks = []
 
+    # Clear out old tasks assigned to this goal
+    for task in goal.tasks:
+        task.goal_id = None
+
+    tasks = []
     for task_id in task_ids:
         task = validate_model(Task, task_id)
         task.goal_id = goal.id
@@ -67,6 +70,7 @@ def assign_tasks_to_goal(goal_id):
         "id": goal.id,
         "task_ids": [task.id for task in tasks]
     }, 200
+
 
 @bp.get("/<goal_id>/tasks")
 def get_tasks_by_goal(goal_id):
