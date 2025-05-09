@@ -30,7 +30,6 @@ def get_one_task(task_id):
     task = validate_model(Task, task_id)
     return {"task": task.to_dict(include_goal_id=(task.goal_id is not None))}
 
-
 # update task
 @bp.put("/<task_id>")
 def update_task(task_id):
@@ -56,6 +55,7 @@ def delete_task(task_id):
 SLACK_TOKEN = os.environ.get("SLACK_BOT_TOKEN")
 SLACK_CHANNEL = os.environ.get("SLACK_CHANNEL")
 
+# Sends a Slack message when a task marked completed
 def notify_slack(task_title):
     headers = {
         "Authorization": f"Bearer {SLACK_TOKEN}",
@@ -68,6 +68,7 @@ def notify_slack(task_title):
     response = requests.post("https://slack.com/api/chat.postMessage", headers=headers, json=payload)
     return response.json()
 
+# partially update mark complete
 @bp.patch("/<task_id>/mark_complete")
 def mark_complete(task_id):
     task = validate_model(Task, task_id)
@@ -78,7 +79,6 @@ def mark_complete(task_id):
         notify_slack(task.title)
 
     return Response(status=204, mimetype="application/json")
-
 
 # partially update incompleted
 @bp.patch("/<task_id>/mark_incomplete")
