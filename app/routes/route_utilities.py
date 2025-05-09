@@ -54,3 +54,17 @@ def get_models_with_filters(cls, filters=None):
 
     models = db.session.scalars(query)
     return [model.to_dict() for model in models]
+
+
+def assign_tasks(goal, task_ids):
+    # Clear current tasks
+    for task in goal.tasks:
+        task.goal_id = None
+
+    tasks = []
+    for task_id in task_ids:
+        task = validate_model(Task, task_id)
+        task.goal_id = goal.id
+        tasks.append(task)
+
+    return tasks
